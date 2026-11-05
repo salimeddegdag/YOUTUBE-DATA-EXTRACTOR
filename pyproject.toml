@@ -1,0 +1,162 @@
+[project]
+name = "youtube-data-extractor"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+
+# =========================================================
+# PROD TOOLS (inclus en production)
+# =========================================================
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.5.4",
+    "pandas>=3.1.1",
+    "polars>=2.1.0",
+]
+
+# =========================================================
+# DEV TOOLS (non inclus en production)
+# =========================================================
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.3",
+]
+
+# =========================================================
+# RUFF (qualité code + lint + format)
+# =========================================================
+[tool.ruff]
+
+line-length = 88           # 👉 longueur max des lignes (standard Python moderne)
+target-version = "py312"   # 👉 adapte les règles à Python 3.12
+
+exclude = [
+    ".venv",               # 👉 environnement virtuel (à ignorer)
+    "__pycache__",         # 👉 fichiers compilés Python
+    ".pytest_cache",       # 👉 cache des tests pytest
+    ".mypy_cache",         # 👉 cache MyPy (typage)
+]
+
+# =========================================================
+# RUFF LINT (détection erreurs + qualité code)
+# =========================================================
+[tool.ruff.lint]
+
+select = [
+    "E",   # 👉 erreurs de style Python (pycodestyle)
+    "F",   # 👉 bugs logiques (variables, imports cassés)
+    "I",   # 👉 tri et organisation des imports
+    "B",   # 👉 détection de bugs courants (bug patterns)
+    "UP",  # 👉 modernisation du code Python
+]
+
+extend-select = [
+    "SIM",  # 👉 simplification du code (réduction complexité)
+    "C4",   # 👉 amélioration des comprehensions (list/dict)
+    "RET",  # 👉 bonnes pratiques sur les return
+    "PIE",  # 👉 améliorations générales du code
+
+    "PL",  # 👉 pylint-like rules (qualité avancée)
+    "T20",  # 👉 détecte print() oubliés en prod
+]
+
+ignore = [] # 👉 aucune règle ignorée (mode propre et strict)
+
+fixable = ["ALL"] # 👉 Ruff peut corriger automatiquement toutes les règles possibles
+
+# =========================================================
+# RUFF FORMAT (style automatique)
+# =========================================================
+[tool.ruff.format]
+
+quote-style = "double" # 👉 guillemets doubles standard Python ("string")
+indent-style = "space" # 👉 indentation avec espaces (standard Python)
+
+
+
+# =========================================================
+# MYPY (typage statique strict)
+# =========================================================
+[tool.mypy]
+
+python_version = "3.12"     # 👉 version Python utilisée pour analyser les types
+strict = true               # 👉 active le mode strict (niveau production)
+warn_return_any = true      # 👉 détecte les retours dangereux de type Any
+warn_unused_configs = true  # 👉 détecte les options MyPy inutilisées
+
+disallow_untyped_defs = true    # 👉 interdit les fonctions sans annotations de types
+disallow_incomplete_defs = true # 👉 interdit les fonctions partiellement typées
+no_implicit_optional = true     # 👉 rend les types None explicites (sécurité)
+check_untyped_defs = true       # 👉 vérifie même les fonctions non typées
+
+
+disallow_any_expr = true        # 👉 interdit les expressions de type Any (réduit les zones floues)
+disallow_any_generics = true    # 👉 interdit les generics non typés (ex: list au lieu de list[int])
+no_implicit_reexport = true     # 👉 empêche les réexports implicites (meilleure clarté des modules)
+strict_equality = true          # 👉 force des comparaisons plus sûres (évite bugs subtils)
+warn_unreachable = true     # 👉 détecte le code jamais atteignable
+
+# =========================================================
+# PYTEST (tests unitaires)
+# =========================================================
+[tool.pytest.ini_options]
+
+testpaths = ["tests"] # 👉 dossier où pytest cherche les tests
+
+addopts = [
+    "-q",                   # 👉 mode silencieux (CI propre, logs minimalistes)
+    "--disable-warnings",   # 👉 supprime le bruit des warnings
+    "--maxfail=1",          # 👉 stop dès la première erreur (CI rapide)
+    
+    "--strict-markers",     # 👉 interdit les markers non déclarés (évite les tests “mal organisés”)
+    "--strict-config",      # 👉 force une config pytest valide (évite erreurs silencieuses)
+    "--tb=short",           # 👉 traceback court et lisible (debug rapide)
+    "--color=yes",          # 👉 active les couleurs même en CI (meilleure lisibilité)
+
+    "--durations=10",       # 👉 affiche les 10 tests les plus lents (optimisation perf tests)
+]
+filterwarnings = [
+    "error",            # 👉 transforme warnings en erreurs (qualité stricte)
+]
+
+python_files = ["test_*.py"]    # 👉 tous les fichiers de test doivent commencer par test_
+python_functions = ["test_*"]   # 👉 toutes les fonctions de test doivent commencer par test_
+python_classes = ["Test*"]      # 👉 toutes les classes de test doivent commencer par Test*
+
+# =========================================================
+# COVERAGE (qualité des tests)
+# =========================================================
+
+[tool.coverage.run]
+
+branch = true
+# 👉 active branch coverage (teste les if/else aussi)
+# ✔ beaucoup plus réaliste que coverage simple
+
+source = ["."]
+# 👉 analyse tout le projet (ou module principal)
+
+omit = ["tests/*",      # 👉 ne pas mesurer les tests eux-mêmes
+    "*/__init__.py",    # 👉 souvent ignoré car peu de logique métier
+    ".venv/*",          # 👉 ignore environnement virtuel
+    "setup.py",         # 👉 fichiers non métier
+]
+
+# =========================================================
+[tool.coverage.report]
+
+show_missing = true     # 👉 affiche les lignes non couvertes par les tests
+skip_covered = true     # 👉 masque les fichiers déjà parfaitement couverts
+fail_under = 85         # 👉 seuil minimum (CI fail si en dessous)  # ✔ 80% = standard réaliste pro    # ✔ 90% = très strict entreprise
+precision = 2           # 👉 affiche la couverture avec 2 décimales
+
+exclude_lines = [
+    "pragma: no cover",             # 👉 permet d’exclure volontairement certaines lignes
+    "if __name__ == .__main__.:",   # 👉 ignore les entrypoints scripts
+    "raise NotImplementedError",    # 👉 code volontairement non implémenté
+    "*/migrations/*",               # 👉 exclut migrations si tu passes vers backend type app
+]

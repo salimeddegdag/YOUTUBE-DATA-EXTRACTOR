@@ -1,0 +1,32 @@
+repos:
+  - repo: local
+    hooks:
+      # 1. Formatage (Ruff)
+      - id: ruff-format
+        name: ruff-format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+
+      # 2. Analyse du code (Ruff)
+      - id: ruff-lint
+        name: ruff-lint
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+
+      # 3. Vérification des types (Mypy)
+      - id: mypy
+        name: mypy
+        entry: uv run mypy src
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      # 4. Exécution des tests unitaires (Pytest)
+      - id: pytest
+        name: pytest
+        entry: uv run pytest
+        language: system
+        pass_filenames: false
+        always_run: true
