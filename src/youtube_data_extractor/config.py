@@ -2,8 +2,8 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
-    youtube_api_key: SecretStr = SecretStr("")
+class YoutubeApiSettings(BaseSettings):
+    api_key: SecretStr = SecretStr("")
     # youtube_api_key: SecretStr | None = None
 
     model_config = SettingsConfigDict(
@@ -16,4 +16,4 @@ class Settings(BaseSettings):
     )
 
 
-settings = Settings()
+youtube_api_setting = YoutubeApiSettings()
