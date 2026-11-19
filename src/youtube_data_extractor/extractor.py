@@ -1,17 +1,20 @@
+
+
 from typing import Any
 
 import httpx
+from schemas import YoutubeUploadsExtractor
 
 
 class YoutubeDataExtractor:
     def __init__(self, api_key: str | None = None):
 
-        self.appi_key = api_key
+        self.api_key = api_key
         self.uploads_id = None
 
     def get_channel_uploads_playlist_id(self, handle: str) -> None | str:
 
-        if not self.appi_key:
+        if not self.api_key:
             return None
 
         url: str = "https://youtube.googleapis.com/youtube/v3/channels"
@@ -20,7 +23,7 @@ class YoutubeDataExtractor:
         params: dict[str, str] = {
             "part": "contentDetails",
             "forHandle": handle,
-            "key": self.appi_key,
+            "key": self.api_key,
         }
         try:
             with httpx.Client(timeout=10.0) as client:
@@ -30,31 +33,7 @@ class YoutubeDataExtractor:
 
                 data: dict[str, Any] = response.json()
 
-                if data.get("pageInfo", {}).get("totalResults", 0) == 0:
-                    return None
-
-                items: list[Any] = (
-                    data.get("items", []) or None
-                )  # ! case null and expected list  - (None or [])--> []  weak case of you have a str
-
-                if not items:   # * case of empty list  - not [] --> False  
-                    return None
-
-                first_item: any = items[0]
-
-                if not isinstance(first_item,dict):
-                    return None
-
-                content_details = first_item.get("contentDetails")
-
-                # if 
-
-                
-
-                # if  response_json_data['pageInfo']['totalResults'] == 0:
-                #     return None
-
-                # return response.json()["items"][0]["id"]
+                return YoutubeUploadsExtractor.model_validate(data).uploads
 
         except httpx.HTTPStatusError as e:
             raise e  # f"HTTP error : {e.response.status_code} - {e.response.text}"
