@@ -13,7 +13,7 @@ def main() -> str:
     channels_id = youtube_data_extractor.get_channel_uploads_playlist_id(
         handle="MrBeast"
     )
-    # print(channels_id)
+    print(channels_id)
 
     return "Done"
 
