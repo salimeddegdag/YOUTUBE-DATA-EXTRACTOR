@@ -7,34 +7,16 @@ def main() -> str:
 
     youtube_api_key: str = youtube_api_setting.api_key.get_secret_value()
 
-    youtube_data_extractor: YoutubeDataExtractor = YoutubeDataExtractor(
-        api_key=youtube_api_key
-    )
-    channels_id = youtube_data_extractor.get_channel_uploads_playlist_id(
-        handle="MrBeast"
-    )
-    print(channels_id)
+    youtube_data_extractor: YoutubeDataExtractor = YoutubeDataExtractor(api_key=youtube_api_key)
+    channels_id: str = youtube_data_extractor.get_channel_uploads_playlist_id(handle="MrBeast")
+    videos_ids: list[str] = youtube_data_extractor.get_playlist_items_video_ids(playlist_id=channels_id)
 
-    return "Done"
+    video_data = youtube_data_extractor.get_video_data(videos_ids_list=videos_ids)
+
+    # print(video_data)
+
+    return ""
 
 
 if __name__ == "__main__":
     main()
-    x = {
-        "kind": "youtube#channelListResponse",
-        "etag": "mky5yfatRnp-E8N9-BwXGY8W8Dk",
-        "pageInfo": {"totalResults": 1, "resultsPerPage": 5},
-        "items": [
-            {
-                "kind": "youtube#channel",
-                "etag": "-f8h6RTCebSZttPcDz3dTkMV5yo",
-                "id": "UCX6OQ3DkcsbYNE6H8uQQuVA",
-                "contentDetails": {
-                    "relatedPlaylists": {
-                        "likes": "",
-                        "uploads": "UUX6OQ3DkcsbYNE6H8uQQuVA",
-                    }
-                },
-            }
-        ],
-    }

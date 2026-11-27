@@ -35,7 +35,7 @@ dev = [
 # =========================================================
 [tool.ruff]
 
-line-length = 88           # 👉 longueur max des lignes (standard Python moderne)
+line-length = 120           # 👉 longueur max des lignes (standard Python moderne)
 target-version = "py312"   # 👉 adapte les règles à Python 3.12
 
 exclude = [
