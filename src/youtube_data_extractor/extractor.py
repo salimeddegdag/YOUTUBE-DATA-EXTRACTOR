@@ -5,12 +5,10 @@ from endpoints import (
     CHANNELS_URL,
     PLAYLIST_ITEMS_URL,
     VIDEO_DATA_URL,
-    ChannelQueryParams,
-    PlaylistItemsQueryParms,
-    VideoDataQueryPrams,
 )
+from api_models import ChannelQueryParams, PlaylistItemsQueryParms, VideoDataQueryPrams
 from pydantic import ValidationError
-from schemas import (
+from models import (
     PlaylistItemsPageSchema,
     PlaylistItemsVideoSchema,
     YoutubeUploadsExtractor,
@@ -84,7 +82,7 @@ class YoutubeDataExtractor:
                     query_params_obj.next_page_token = page.next_page_token
 
             return video_ids
-        
+
         except httpx.HTTPStatusError as e:
             raise e  # f"HTTP error : {e.response.status_code} - {e.response.text}"
 
@@ -112,7 +110,6 @@ class YoutubeDataExtractor:
                     response = client.get(url=VIDEO_DATA_URL, params=query_params_obj.model_dump(by_alias=True))
                     response.raise_for_status()
 
-                    
                     page = VideoItemsPage.model_validate(response.json())
 
                     videos_data.extend(page.video_items)
@@ -123,10 +120,10 @@ class YoutubeDataExtractor:
 
             except httpx.HTTPStatusError as e:
                 raise e  # f"HTTP error : {e.response.status_code} - {e.response.text}"
-    
+
             except httpx.RequestError as e:
                 raise e  # f"Network error : {e}"
-    
+
             except ValidationError as e:
                 raise e
             return None

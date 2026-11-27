@@ -77,8 +77,3 @@ class VideoItemsPage(BaseModel):
 
     def to_flat_row(self) -> list[dict[str | int]]:
         return [item.to_flat_dict() for item in self.video_items]
-
-
-
-
-
